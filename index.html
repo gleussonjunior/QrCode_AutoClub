@@ -80,31 +80,25 @@ button {
     border-radius: 24px;
     text-align: center;
     width: 100%;
-    max-width: 340px;
+    max-width: 360px;
 }
 
 .title {
     font-size: 28px;
     font-weight: 800;
-    line-height: 1.2;
     margin-bottom: 20px;
 }
 
 .qr-box {
-    width: 260px;
-    height: 260px;
     background: white;
-    padding: 16px;
+    padding: 20px;
     border-radius: 20px;
-    display: flex;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
-    margin: 0 auto;
 }
 
 #qrcode canvas {
-    width: 100% !important;
-    height: 100% !important;
     display: block;
 }
 
@@ -128,6 +122,14 @@ button {
 
         <label>Garajeiro</label>
         <input id="garajeiro" placeholder="ex: branco-automoveis">
+
+        <label>Tamanho</label>
+        <select id="size">
+            <option value="250">Pequeno (250px)</option>
+            <option value="300" selected>Médio (300px)</option>
+            <option value="400">Grande (400px)</option>
+            <option value="500">Extra Grande (500px)</option>
+        </select>
 
         <button onclick="downloadQR()">Gerar e baixar</button>
     </div>
@@ -157,6 +159,7 @@ function normalizeSlug(text) {
 function generateQR() {
     const url = document.getElementById('url').value;
     const garajeiroInput = document.getElementById('garajeiro');
+    const size = parseInt(document.getElementById('size').value);
 
     let garajeiro = normalizeSlug(garajeiroInput.value);
     garajeiroInput.value = garajeiro;
@@ -174,8 +177,8 @@ function generateQR() {
 
     new QRCode(document.getElementById('qrcode'), {
         text: finalUrl,
-        width: 220,
-        height: 220
+        width: size,
+        height: size
     });
 }
 
@@ -197,6 +200,7 @@ function downloadQR() {
 
 document.getElementById('url').addEventListener('input', generateQR);
 document.getElementById('garajeiro').addEventListener('input', generateQR);
+document.getElementById('size').addEventListener('change', generateQR);
 
 generateQR();
 
