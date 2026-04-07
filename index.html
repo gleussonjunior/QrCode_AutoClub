@@ -37,7 +37,12 @@ body {
 }
 
 h1 {
-    margin-bottom: 10px;
+    margin-bottom: 15px;
+}
+
+label {
+    font-size: 13px;
+    font-weight: 600;
 }
 
 input, select {
@@ -70,26 +75,31 @@ button {
 
 .card {
     background: black;
-    padding: 25px;
-    border-radius: 20px;
+    padding: 30px 25px;
+    border-radius: 24px;
     text-align: center;
+    width: 100%;
+    max-width: 360px;
 }
 
-.card h2 {
-    font-size: 20px;
+.title {
+    font-size: 28px;
+    font-weight: 800;
+    line-height: 1.2;
     margin-bottom: 20px;
 }
 
 .qr-box {
     background: white;
-    padding: 15px;
-    border-radius: 15px;
+    padding: 20px;
+    border-radius: 18px;
     display: inline-block;
 }
 
 .brand {
-    margin-top: 15px;
-    font-weight: bold;
+    margin-top: 18px;
+    font-weight: 800;
+    font-size: 18px;
 }
 </style>
 </head>
@@ -119,11 +129,13 @@ button {
 
     <div class="preview">
         <div class="card">
-            <h2>🚗 Veja nosso estoque agora</h2>
+            <div class="title">Conheça nosso estoque!</div>
+
             <div class="qr-box">
                 <div id="qrcode"></div>
             </div>
-            <div class="brand" id="brand">AutoClub</div>
+
+            <div class="brand">AutoClub</div>
         </div>
     </div>
 
@@ -140,6 +152,7 @@ function normalizeSlug(text) {
 function generateQR() {
     const url = document.getElementById('url').value;
     const garajeiroInput = document.getElementById('garajeiro');
+
     let garajeiro = normalizeSlug(garajeiroInput.value);
     garajeiroInput.value = garajeiro;
 
@@ -161,16 +174,15 @@ function generateQR() {
         width: size,
         height: size
     });
-
-    document.getElementById('brand').textContent = garajeiro || 'AutoClub';
 }
 
 function downloadQR() {
     generateQR();
 
     const canvas = document.querySelector('#qrcode canvas');
-    const link = document.createElement('a');
+    if (!canvas) return;
 
+    const link = document.createElement('a');
     link.href = canvas.toDataURL();
     link.download = 'qr-autoclub.png';
     link.click();
