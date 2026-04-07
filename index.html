@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoClub - Gerador de QR Code para Garagens</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+```
+    body {
+        font-family: 'Trebuchet MS', sans-serif;
+        background: linear-gradient(135deg, #0a1628 0%, #1a2c4a 100%);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        color: #fff;
+    }
+
+    .container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 40px;
+        max-width: 1200px;
+        width: 100%;
+        align-items: start;
+    }
+
+    @media (max-width: 768px) {
+        .container {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .panel {
+        background: rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 16px;
+        padding: 40px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    }
+
+    h1 {
+        font-size: 28px;
+        margin-bottom: 8px;
+        font-weight: 700;
+        letter-spacing: -0.5px;
+    }
+
+    .subtitle {
+        font-size: 14px;
+        color: #b0d4ff;
+        margin-bottom: 30px;
+        font-weight: 400;
+    }
+
+    .form-group {
+        margin-bottom: 25px;
+    }
+
+    label {
+        display: block;
+        font-size: 13px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        margin-bottom: 10px;
+        color: #a8d5ff;
+    }
+
+    input, select {
+        width: 100%;
+        padding: 12px 14px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.05);
+        color: #fff;
+        font-size: 14px;
+        transition: all 0.3s ease;
+    }
+
+    input::placeholder {
+        color: rgba(255, 255, 255, 0.4);
+    }
+
+    input:focus, select:focus {
+        outline: none;
+        border-color: #ff6b35;
+        background: rgba(255, 255, 255, 0.1);
+        box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+    }
+
+    input.error {
+        border-color: #ff4444;
+        background: rgba(255, 68, 68, 0.05);
+    }
+
+    .error-message {
+        font-size: 12px;
+        color: #ff8888;
+        margin-top: 6px;
+        display: none;
+    }
+
+    .error-message.show {
+        display: block;
+    }
+
+    button {
+        width: 100%;
+        padding: 14px;
+        background: linear-gradient(135deg, #ff6b35 0%, #ff5c2a 100%);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-size: 14px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-bottom: 12px;
+    }
+
+    button:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 24px rgba(255, 107, 53, 0.3);
+    }
+
+    button:active:not(:disabled) {
+        transform: translateY(0);
+    }
+
+    button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    .btn-secondary {
+        background: rgba(255, 255, 255, 0.1);
+        color: #b0d4ff;
+    }
+
+    .btn-secondary:hover:not(:disabled) {
+        background: rgba(255, 255, 255, 0.15);
+    }
+
+    /* Preview Panel */
+    .preview-panel {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .preview-title {
+        font-size: 18px;
+        font-weight: 700;
+        margin-bottom: 25px;
+        text-align: center;
+    }
+
+    .qr-wrapper {
+        background: #000000;
+        padding: 25px 40px;
+        border-radius: 24px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+        position: relative;
+        margin-bottom: 25px;
+    }
+
+    .header-text {
+        font-size: 32px;
+        font-weight: 900;
+        color: #ffffff;
+        margin-bottom: 20px;
+        letter-spacing: -0.8px;
+        text-align: center;
+        line-height: 1.2;
+    }
+
+    .qr-container {
+        position: relative;
+        width: fit-content;
+        margin: 0 auto 20px;
+        padding: 20px;
+        background: #ffffff;
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .branding {
+        text-align: center;
+        font-size: 28px;
+        font-weight: 900;
+        letter-spacing: -1px;
+        color: #ffffff;
+    }
+
+    #qrcode {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 280px;
+        position: relative;
+    }
+
+    #qrcode canvas {
+        max-width: 100%;
+    }
+
+    .info-box {
+        background: rgba(255, 107, 53, 0.1);
+        border: 1px solid rgba(255, 107, 53, 0.3);
+        border-radius: 10px;
+        padding: 15px;
+        font-size: 13px;
+        color: #ffc9a8;
+        line-height: 1.6;
+        margin-top: 20px;
+        text-align: center;
+    }
+
+    .preview-size {
+        font-size: 12px;
+        color: #888;
+        text-align: center;
+        margin-top: 15px;
+        font-weight: 500;
+    }
+
+    .success-message {
+        background: rgba(76, 175, 80, 0.1);
+        border: 1px solid rgba(76, 175, 80, 0.3);
+        border-radius: 10px;
+        padding: 12px;
+        font-size: 12px;
+        color: #90ee90;
+        margin-top: 12px;
+        display: none;
+        text-align: center;
+    }
+
+    .success-message.show {
+        display: block;
+    }
+</style>
+```
+
+</head>
+<body>
+    <div class="container">
+        <!-- Painel de Controle -->
+        <div class="panel">
+            <h1>AutoClub QR</h1>
+            <p class="subtitle">Crie seu código para as garagens</p>
+
+```
+        <form id="qrForm">
+            <div class="form-group">
+                <label for="url">URL do Site</label>
+                <input 
+                    type="url" 
+                    id="url" 
+                    value="https://autoclubgaragens.com.br" 
+                    placeholder="https://exemplo.com.br"
+                    required
+                >
+                <div class="error-message" id="urlError">URL inválida</div>
+            </div>
+
+            <div class="form-group">
+                <label for="garajeiro">Nome do Garajeiro (slug)</label>
+                <input 
+                    type="text" 
+                    id="garajeiro" 
+                    placeholder="Ex: branco-automoveis"
+                >
+                <div class="error-message" id="garajeiroError">Apenas letras, números, hífens e underscore</div>
+            </div>
+
+            <div class="form-group">
+                <label for="size">Tamanho (pixels)</label>
+                <select id="size">
+                    <option value="250">Pequeno (250px)</option>
+                    <option value="300" selected>Médio (300px)</option>
+                    <option value="400">Grande (400px)</option>
+                    <option value="500">Extra Grande (500px)</option>
+                </select>
+            </div>
+
+            <button type="button" id="downloadBtn" onclick="downloadQR()">
+                ⬇️ Gerar e Baixar QR Code
+            </button>
+            <div class="success-message" id="successMsg">✓ QR Code gerado com sucesso!</div>
+        </form>
+
+        <div class="info-box">
+            💡 <strong>Dica:</strong> Use tamanho Grande ou Extra Grande para melhor legibilidade quando impresso. A moldura preta garante destaque na vitrine!
+        </div>
+    </div>
+
+    <!-- Painel de Preview -->
+    <div class="preview-panel">
+        <div class="preview-title">Pré-visualização</div>
+        <div class="qr-wrapper">
+            <div class="header-text">Conheça nosso<br>estoque de veículos</div>
+            <div class="qr-container">
+                <div id="qrcode"></div>
+            </div>
+            <div class="branding">AutoClub</div>
+        </div>
+        <div class="preview-size" id="previewSize">300 × 300 pixels</div>
+    </div>
+</div>
+
+<script>
+    let qrcodeInstance = null;
+
+    // Valida URL
+    function isValidURL(string) {
+        try {
+            new URL(string);
+            return true;
+        } catch (_) {
+            return false;
+        }
+    }
+
+    // Valida slug do garajeiro (apenas letras, números, hífens e underscore)
+    function isValidSlug(string) {
+        if (!string) return true; // Campo opcional
+        return /^[a-zA-Z0-9_-]+$/.test(string);
+    }
+
+    // Gera o QR Code
+    function generateQR() {
+        const url = document.getElementById('url').value;
+        const garajeiro = document.getElementById('garajeiro').value;
+        const size = parseInt(document.getElementById('size').value);
+
+        // Validação de URL
+        const urlInput = document.getElementById('url');
+        const urlError = document.getElementById('urlError');
+        
+        if (!isValidURL(url)) {
+            urlInput.classList.add('error');
+            urlError.classList.add('show');
+            document.getElementById('qrcode').innerHTML = '<p style="color: #999; font-size: 14px;">URL inválida</p>';
+            return;
+        } else {
+            urlInput.classList.remove('error');
+            urlError.classList.remove('show');
+        }
+
+        // Validação de slug
+        const garajeiroInput = document.getElementById('garajeiro');
+        const garajeiroError = document.getElementById('garajeiroError');
+        
+        if (!isValidSlug(garajeiro)) {
+            garajeiroInput.classList.add('error');
+            garajeiroError.classList.add('show');
+            return;
+        } else {
+            garajeiroInput.classList.remove('error');
+            garajeiroError.classList.remove('show');
+        }
+
+        // Constrói a URL final com parâmetro de garajeiro se fornecido
+        let finalUrl = url;
+        if (garajeiro) {
+            const separator = url.includes('?') ? '&' : '?';
+            finalUrl = url + separator + 'garajeiro=' + encodeURIComponent(garajeiro);
+        }
+
+        // Limpa o container anterior
+        document.getElementById('qrcode').innerHTML = '';
+
+        // Cria novo QR Code - PRETO com fundo BRANCO (padrão)
+        qrcodeInstance = new QRCode(document.getElementById('qrcode'), {
+            text: finalUrl,
+            width: size,
+            height: size,
+            colorDark: '#000000',
+            colorLight: '#ffffff',
+            correctLevel: QRCode.CorrectLevel.H
+        });
+
+        // Atualiza o display de tamanho
+        document.getElementById('previewSize').textContent = `${size} × ${size} pixels`;
+    }
+
+    // Download do QR Code
+    function downloadQR() {
+        generateQR(); // Garante que o QR está atualizado
+
+        const qrCanvas = document.querySelector('#qrcode canvas');
+        if (!qrCanvas) {
+            alert('Gere um QR Code válido primeiro!');
+            return;
+        }
+
+        const garajeiro = document.getElementById('garajeiro').value;
+        const timestamp = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+        const filename = garajeiro 
+            ? `autoclub-qr-${garajeiro}-${timestamp}.png`
+            : `autoclub-qr-${timestamp}.png`;
+
+        const link = document.createElement('a');
+        link.href = qrCanvas.toDataURL('image/png');
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        // Mostra mensagem de sucesso
+        const successMsg = document.getElementById('successMsg');
+        successMsg.classList.add('show');
+        setTimeout(() => {
+            successMsg.classList.remove('show');
+        }, 3000);
+    }
+
+    // Event listeners para atualização em tempo real
+    document.getElementById('url').addEventListener('input', generateQR);
+    document.getElementById('garajeiro').addEventListener('input', generateQR);
+    document.getElementById('size').addEventListener('change', generateQR);
+
+    // Gera QR Code inicial
+    generateQR();
+</script>
+```
+
+</body>
+</html>
